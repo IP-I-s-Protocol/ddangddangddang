@@ -44,7 +44,10 @@ public class UserService {
         validateNickname(nickname);
         String password = passwordEncoder.encode(requestDto.getPassword());
 
-        User saveUser = userRepository.findById(user.getId());
+        User saveUser = userRepository.findById(user.getId()).orElseThrow(
+            () -> new IllegalArgumentException("회원이 존재하지 않습니다.")
+        );
+        
         saveUser.updateUser(nickname, password);
     }
 
@@ -66,7 +69,8 @@ public class UserService {
     }
 
     public User getUser(Long id) {
-        return userRepository.findById(id);
+        return userRepository.findById(id).orElseThrow(
+            () -> new IllegalArgumentException("회원이 존재하지 않습니다."));
     }
 
 }

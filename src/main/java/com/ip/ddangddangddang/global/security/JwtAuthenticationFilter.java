@@ -5,7 +5,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.ip.ddangddangddang.domain.user.dto.request.UserSigninRequestDto;
 import com.ip.ddangddangddang.domain.user.entity.User;
-import com.ip.ddangddangddang.domain.user.repository.UserJpaRepository;
+import com.ip.ddangddangddang.domain.user.repository.UserRepository;
 import com.ip.ddangddangddang.global.jwt.JwtUtil;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.http.HttpServletRequest;
@@ -23,14 +23,14 @@ public class JwtAuthenticationFilter extends UsernamePasswordAuthenticationFilte
 
     private final JwtUtil jwtUtil;
 
-    private final UserJpaRepository userJpaRepository;
+    private final UserRepository userRepository;
 
     private final PasswordEncoder passwordEncoder;
 
-    public JwtAuthenticationFilter(JwtUtil jwtUtil, UserJpaRepository userJpaRepository,
+    public JwtAuthenticationFilter(JwtUtil jwtUtil, UserRepository userRepository,
         PasswordEncoder passwordEncoder) {
         this.jwtUtil = jwtUtil;
-        this.userJpaRepository = userJpaRepository;
+        this.userRepository = userRepository;
         this.passwordEncoder = passwordEncoder;
         setFilterProcessesUrl("/v1/users/signin");
     }
@@ -43,10 +43,9 @@ public class JwtAuthenticationFilter extends UsernamePasswordAuthenticationFilte
             UserSigninRequestDto requestDto = new ObjectMapper().readValue(request.getInputStream(),
                 UserSigninRequestDto.class);
             //인증 처리를 하는 메서드 입력받은 이메일과 비밀번호로 검증
-            User user = userJpaRepository.findByEmail(
-                    requestDto.getEmail())
-                .orElseThrow(
-                    () -> new BadCredentialsException("잘못된 이메일을 입력하셨습니다.")); //인증실패를 위한 예외
+            User user = userRepository.findByEmail(
+                requestDto.getEmail()).orElseThrow(
+                () -> new BadCredentialsException("잘못된 이메일을 입력하셨습니다.")); //인증실패를 위한 예외
             if (!passwordEncoder.matches(requestDto.getPassword(), user.getPassword())) {
                 throw new BadCredentialsException("잘못된 비밀번호를 입력하셨습니다.");
             }
