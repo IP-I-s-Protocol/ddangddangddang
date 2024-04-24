@@ -15,8 +15,6 @@ import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToOne;
 import jakarta.persistence.Table;
-import jakarta.persistence.Temporal;
-import jakarta.persistence.TemporalType;
 import java.time.LocalDateTime;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -59,7 +57,6 @@ public class Auction extends Timestamp {
     private StatusEnum statusEnum;
 
     @Column
-    @Temporal(TemporalType.TIMESTAMP)
     private LocalDateTime finishedAt;
 
     @ManyToOne
