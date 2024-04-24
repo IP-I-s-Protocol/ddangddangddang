@@ -16,6 +16,8 @@ import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToOne;
 import jakarta.persistence.Table;
 import java.time.LocalDateTime;
+import java.time.ZoneId;
+import java.time.ZonedDateTime;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -27,7 +29,7 @@ import org.hibernate.annotations.SQLRestriction;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-@SQLDelete(sql = "UPDATE auctions SET deleted_at = NOW() WHERE id = ?")
+@SQLDelete(sql = "UPDATE auctions SET deleted_at = CONVERT_TZ(NOW(), @@session.time_zone, '+09:00') WHERE id = ?")
 @SQLRestriction(value = "deleted_at IS NULL")
 @Entity
 @Table(name = "auctions")
@@ -73,7 +75,9 @@ public class Auction extends Timestamp {
         this.content = requestDto.getContent();
         this.price = 0L;
         this.statusEnum = StatusEnum.ON_SALE;
-        this.finishedAt = LocalDateTime.now().plusDays(1);
+        this.finishedAt = ZonedDateTime.now(ZoneId.of("Asia/Seoul")).toLocalDateTime()
+            .plusMinutes(5L);
+        // this.finishedAt = LocalDateTime.now().plusMinutes(5L);
         this.user = user;
         this.file = file;
     }
@@ -90,4 +94,5 @@ public class Auction extends Timestamp {
         this.price = price;
         this.buyerId = buyerId;
     }
+
 }

@@ -18,10 +18,10 @@ import com.ip.ddangddangddang.global.exception.custom.UserHasNotAuthorityToAucti
 import com.ip.ddangddangddang.global.exception.custom.UserHasNotAuthorityToFileException;
 import com.ip.ddangddangddang.global.exception.custom.UserNotFoundException;
 import com.ip.ddangddangddang.global.mail.MailService;
+import com.ip.ddangddangddang.global.redis.CacheService;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
-import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -30,8 +30,6 @@ import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Slice;
-import org.springframework.data.redis.core.RedisTemplate;
-import org.springframework.data.redis.core.ValueOperations;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -46,9 +44,10 @@ public class AuctionService {
     private final FileService fileService;
     private final TownService townService;
     private final MailService mailService;
-    private final RedisTemplate<String, String> redisTemplate;
+    private final CacheService cacheService;
     private final CacheManager cacheManager;
 
+    @CacheEvict(value = "auctions", allEntries = true ,cacheManager = "cacheManager")
     @Transactional
     public void createAuction(AuctionRequestDto requestDto, Long userId) { // Todo fileId 곂칠때 duplicated error
         User user = userService.getUserById(userId)
@@ -61,17 +60,10 @@ public class AuctionService {
         }
 
         Auction auction = auctionRepository.save(new Auction(requestDto, user, file));
-
-        ValueOperations<String, String> operations = redisTemplate.opsForValue();
-        String redisKey = "auctionId:" + auction.getId();
-        // redisKey = "auctionId:1";
-
-        operations.set(redisKey, "1");
-        redisTemplate.expire(redisKey, 5, TimeUnit.HOURS);
-
-        log.info("경매 등록, " + redisKey);
+        cacheService.setAuctionExpiredKey(auction.getId());
     }
 
+    @CacheEvict(value = "auctions", allEntries = true ,cacheManager = "cacheManager")
     @Transactional
     public void deleteAuction(Long auctionId, Long userId) {
         Auction auction = validatedAuction(auctionId);
@@ -110,6 +102,7 @@ public class AuctionService {
         }
 
         auction.updateStatusToComplete();
+
         return new AuctionUpdateResponseDto(
             auction.getId(),
             auction.getTownId(),
@@ -118,7 +111,9 @@ public class AuctionService {
             auction.getPrice(),
             auction.getBuyerId(),
             auction.getStatusEnum(),
-            auction.getFinishedAt());
+            auction.getFinishedAt()
+        );
+
     }
 
     @CacheEvict(value = "auction", key = "#auctionId", cacheManager = "cacheManager")
@@ -134,7 +129,8 @@ public class AuctionService {
             auction.getPrice(),
             auction.getBuyerId(),
             auction.getStatusEnum(),
-            auction.getFinishedAt());
+            auction.getFinishedAt()
+        );
     }
 
     @Cacheable(value = "auctions", cacheManager = "cacheManager")
@@ -175,6 +171,7 @@ public class AuctionService {
         String townName = townService.findNameByIdOrElseThrow(auction.getTownId());
 
         String buyerNickname = "";
+
         if (auction.getBuyerId() != null) {
             buyerNickname = userService.getUserByIdOrElseThrow(auction.getBuyerId()).getNickname();
         }
