@@ -32,6 +32,7 @@ public interface FileValues {
     String ORIGINAL_FILE_NAME = "file.png";
     byte[] TEST_DATA = FILE_NAME.getBytes();
     byte[] EMPTY_DATA = new byte[0];
+    String CDN_PATH = "https://dccg5mv6uel89.cloudfront.net/keyName";
 
     MockMultipartFile MOCK_MULTIPART_FILE = new MockMultipartFile(
         FILE_NAME,
