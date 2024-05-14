@@ -37,8 +37,7 @@ public class S3Service implements FileUploadService {
             throw new NotValidBucketException("존재하지 않는 버킷입니다.");
         }
 
-        return URLDecoder.decode(amazonS3.getUrl(bucket, keyName).toString(),
-            StandardCharsets.UTF_8);
+        return "https://dccg5mv6uel89.cloudfront.net/" + keyName;
     }
 
     @Override
