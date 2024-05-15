@@ -270,7 +270,7 @@ class AuctionServiceTest implements AuctionServiceTestValues {
     public class AuctionGetTest {
 
         @Test
-        void 옥션_상세_조회_성공_테스트() {
+        void 옥션_상세_조회_성공_테스트_buyerId가_있을_때() {
             //given
             given(auctionRepository.findById(anyLong())).willReturn(
                 Optional.ofNullable(TEST_AUCTION1));
@@ -281,6 +281,19 @@ class AuctionServiceTest implements AuctionServiceTestValues {
                 TEST_TOWN1_AUCTION1_ID);
             //then
             assertEquals(TEST_BUYER_USER_NICKNAME, auctionResponseDto.getBuyerNickname());
+
+        }
+
+        @Test
+        void 옥션_상세_조회_성공_테스트_buyerId가_없을_때() {
+            //given
+            given(auctionRepository.findById(anyLong())).willReturn(
+                Optional.ofNullable(TEST_ANOTHER_TOWN_AUCTION1));
+            given(townService.findNameByIdOrElseThrow(anyLong())).willReturn(TEST_TOWN1_NAME);
+            //when
+            AuctionResponseDto auctionResponseDto = auctionService.getAuction(TEST_TOWN1_AUCTION1_ID);
+            //then
+            assertEquals(TEST_DEFAULT_BUYER_USER_NICKNAME, auctionResponseDto.getBuyerNickname());
 
         }
 
