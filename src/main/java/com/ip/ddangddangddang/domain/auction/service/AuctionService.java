@@ -20,12 +20,10 @@ import com.ip.ddangddangddang.global.exception.custom.UserNotFoundException;
 import com.ip.ddangddangddang.global.mail.MailService;
 import com.ip.ddangddangddang.global.redis.CacheService;
 import java.util.List;
-import java.util.Objects;
 import java.util.Optional;
 import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.cache.CacheManager;
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.cache.annotation.Caching;
@@ -181,16 +179,23 @@ public class AuctionService {
     @Cacheable(value = "auction", key = "#auctionId", cacheManager = "cacheManager")
     public AuctionResponseDto getAuction(Long auctionId) {
         Auction auction = validatedAuction(auctionId);
-
         String townName = townService.findNameByIdOrElseThrow(auction.getTownId());
+        final String defaultBuyerNickname = "nullBuyer";
+        if (auction.getBuyerId() == null) {
 
-        String buyerNickname = "";
-
-        if (auction.getBuyerId() != null) {
-            buyerNickname = userService.getUserByIdOrElseThrow(auction.getBuyerId()).getNickname();
+            return new AuctionResponseDto(
+                auction,
+                townName,
+                defaultBuyerNickname,
+                auction.getFile().getFilePath());
         }
 
-        return new AuctionResponseDto(auction, townName, buyerNickname,
+        String buyerNickname = userService.getUserByIdOrElseThrow(auction.getBuyerId()).getNickname();
+
+        return new AuctionResponseDto(
+            auction,
+            townName,
+            buyerNickname,
             auction.getFile().getFilePath());
     }
 
