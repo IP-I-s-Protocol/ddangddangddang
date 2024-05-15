@@ -45,6 +45,7 @@ public interface AuctionServiceTestValues {
     String TEST_USER_EMAIL = "testUserEmail";
     String TEST_USER_NICKNAME = "testUserNickname";
     String TEST_BUYER_USER_NICKNAME = "testBuyerNickname";
+    String TEST_DEFAULT_BUYER_USER_NICKNAME = "nullBuyer";
     String TEST_USER_PASSWORD = "testPassword";
     String TEST_USER_ENCRYPTED_PASSWORD = "testEncryptedPassword";
 
@@ -158,7 +159,7 @@ public interface AuctionServiceTestValues {
         .title(TEST_AUCTION_TITLE)
         .content(TEST_AUCTION_CONTENT)
         .price(TEST_AUCTION_PRICE)
-        .buyerId(TEST_USER4_ID)
+        .buyerId(null)
         .statusEnum(StatusEnum.ON_SALE)
         .finishedAt(TEST_LOCAL_DATETIME_TOMORROW)
         .user(TEST_USER3)

@@ -9,7 +9,7 @@ import lombok.Getter;
 @Builder
 @AllArgsConstructor
 @JsonInclude(JsonInclude.Include.NON_NULL)
-public class Response<T> { //기본적으로 제공하는 ResponseEntity 안 쓰고 dto로 반환
+public class Response<T> {
 
     private T data;
 
