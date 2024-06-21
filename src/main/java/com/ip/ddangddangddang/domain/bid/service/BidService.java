@@ -10,6 +10,7 @@ import com.ip.ddangddangddang.domain.bid.dto.request.BidRequestDto;
 import com.ip.ddangddangddang.domain.bid.entity.Bid;
 import com.ip.ddangddangddang.domain.bid.repository.BidRepository;
 import com.ip.ddangddangddang.global.aop.DistributedLock;
+import com.ip.ddangddangddang.global.exception.custom.CustomAuctionException;
 import com.ip.ddangddangddang.global.exception.custom.CustomBidException;
 import java.util.Optional;
 import java.util.concurrent.TimeUnit;
@@ -68,7 +69,7 @@ public class BidService {
     }
 
     private Auction validatedAuction(Optional<Auction> auction) {
-        return auction.orElseThrow(() -> new IllegalArgumentException("게시글이 존재하지 않습니다."));
+        return auction.orElseThrow(() -> new CustomAuctionException("게시글이 존재하지 않습니다."));
     }
 
 }
