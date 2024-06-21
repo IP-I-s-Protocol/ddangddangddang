@@ -1,4 +1,4 @@
-package com.ip.ddangddangddang.domain.town.townList;
+package com.ip.ddangddangddang.domain.town.townlist;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 

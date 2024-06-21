@@ -2,8 +2,8 @@ package com.ip.ddangddangddang.domain.town.service;
 
 import com.ip.ddangddangddang.domain.town.entity.Town;
 import com.ip.ddangddangddang.domain.town.repository.TownRepository;
-import com.ip.ddangddangddang.domain.town.townList.TownList;
-import com.ip.ddangddangddang.domain.town.townList.TownListRepository;
+import com.ip.ddangddangddang.domain.town.townlist.TownList;
+import com.ip.ddangddangddang.domain.town.townlist.TownListRepository;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.NoSuchElementException;

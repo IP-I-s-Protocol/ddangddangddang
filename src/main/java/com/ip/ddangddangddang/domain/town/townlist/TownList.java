@@ -1,4 +1,4 @@
-package com.ip.ddangddangddang.domain.town.townList;
+package com.ip.ddangddangddang.domain.town.townlist;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;

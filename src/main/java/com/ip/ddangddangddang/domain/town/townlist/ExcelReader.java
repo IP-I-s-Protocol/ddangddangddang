@@ -1,4 +1,4 @@
-package com.ip.ddangddangddang.domain.town.townList;
+package com.ip.ddangddangddang.domain.town.townlist;
 
 import java.io.FileInputStream;
 import java.io.IOException;
