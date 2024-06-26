@@ -8,6 +8,7 @@ import com.ip.ddangddangddang.domain.comment.entity.Comment;
 import com.ip.ddangddangddang.domain.comment.repository.CommentRepository;
 import com.ip.ddangddangddang.domain.user.entity.User;
 import com.ip.ddangddangddang.domain.user.service.UserService;
+import com.ip.ddangddangddang.global.exception.custom.CustomAuctionException;
 import com.ip.ddangddangddang.global.exception.custom.CustomUserException;
 import java.util.List;
 import java.util.Optional;
@@ -28,7 +29,7 @@ public class CommentService {
     public void createComment(Long auctionId, CommentCreateRequestDto requestDto, Long userId) {
         User user = userService.getUserByIdOrElseThrow(userId);
         Optional<Auction> foundAuction = auctionService.getAuctionById(auctionId);
-        Auction auction = validatedAuction(foundAuction);
+        Auction auction = validateAuction(foundAuction);
 
         Long sellerId = auction.getUser().getId();
         Long buyerId = auction.getBuyerId();
@@ -40,7 +41,7 @@ public class CommentService {
 
     public List<CommentReadResponseDto> getComments(Long auctionId, Long userId) {
         Optional<Auction> foundAuction = auctionService.getAuctionById(auctionId);
-        Auction auction = validatedAuction(foundAuction);
+        Auction auction = validateAuction(foundAuction);
 
         Long sellerId = auction.getUser().getId();
         Long buyerId = auction.getBuyerId();
@@ -67,8 +68,8 @@ public class CommentService {
         }
     }
 
-    private Auction validatedAuction(Optional<Auction> auction) {
-        return auction.orElseThrow(() -> new IllegalArgumentException("게시글이 존재하지 않습니다."));
+    private Auction validateAuction(Optional<Auction> auction) {
+        return auction.orElseThrow(() -> new CustomAuctionException("게시글이 존재하지 않습니다."));
     }
 
 }

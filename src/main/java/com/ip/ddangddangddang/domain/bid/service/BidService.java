@@ -31,7 +31,7 @@ public class BidService {
         throws JsonProcessingException {
         Optional<Auction> foundAuction = auctionService.getAuctionById(auctionId);
 
-        Auction auction = validatedAuction(foundAuction);
+        Auction auction = validateAuction(foundAuction);
         validateAuctionStatus(auction);
 
         Long seller = auction.getUser().getId();
@@ -68,7 +68,7 @@ public class BidService {
         }
     }
 
-    private Auction validatedAuction(Optional<Auction> auction) {
+    private Auction validateAuction(Optional<Auction> auction) {
         return auction.orElseThrow(() -> new CustomAuctionException("게시글이 존재하지 않습니다."));
     }
 
